@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Registration | Online Electronic Store</title>
+
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:"Segoe UI",Arial,sans-serif; background:#f3f6fb; color:#172033; }
+.topbar { background:linear-gradient(120deg,#111827,#253858); color:white; padding:22px 5%; font-size:21px; font-weight:750; }
+.page { width:92%; max-width:780px; margin:35px auto; }
+.card { background:white; padding:32px; border:1px solid #e7edf5; border-radius:18px; box-shadow:0 8px 28px rgba(15,23,42,.06); }
+h1 { font-size:28px; margin-bottom:8px; }
+.subtitle { color:#64748b; font-size:14px; line-height:1.6; margin-bottom:24px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+label { display:block; margin:15px 0 8px; font-size:13px; font-weight:700; color:#334155; }
+input { width:100%; padding:13px; border:1px solid #dbe3ee; border-radius:9px; font-size:14px; outline:none; }
+input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+button { width:100%; margin-top:25px; padding:14px; border:0; border-radius:9px; background:#2563eb; color:white; font-size:14px; font-weight:700; cursor:pointer; }
+button:hover { background:#1d4ed8; }
+.link-row { text-align:center; margin-top:20px; font-size:13px; color:#64748b; }
+a { color:#2563eb; font-weight:650; text-decoration:none; }
+a:hover { text-decoration:underline; }
+@media(max-width:600px) { .grid { grid-template-columns:1fr; } .card { padding:22px; } h1 { font-size:24px; } }
+</style>
+</head>
+
+<body>
+<div class="topbar">Online Electronic Store</div>
+
+<div class="page">
+    <div class="card">
+        <h1>Create Your Account</h1>
+        <p class="subtitle">Register to explore products and place orders.</p>
+
+        <form action="creg" method="post">
+            <div class="grid">
+                <div>
+                    <label for="uname">Username</label>
+                    <input id="uname" type="text" name="uname" autocomplete="username" required>
+                </div>
+
+                <div>
+                    <label for="pwd">Password</label>
+                    <input id="pwd" type="password" name="pwd" minlength="4" autocomplete="new-password" required>
+                </div>
+
+                <div>
+                    <label for="fname">First Name</label>
+                    <input id="fname" type="text" name="fname" autocomplete="given-name" required>
+                </div>
+
+                <div>
+                    <label for="lname">Last Name</label>
+                    <input id="lname" type="text" name="lname" autocomplete="family-name">
+                </div>
+
+                <div>
+                    <label for="addr">Address</label>
+                    <input id="addr" type="text" name="addr" autocomplete="street-address">
+                </div>
+
+                <div>
+                    <label for="mail">Email Address</label>
+                    <input id="mail" type="email" name="mail" autocomplete="email">
+                </div>
+
+                <div>
+                    <label for="phno">Phone Number</label>
+                    <input id="phno" type="text" name="phno"
+                        pattern="[0-9+ -]{6,15}" title="Enter a valid phone number"
+                        autocomplete="tel">
+                </div>
+            </div>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="link-row">
+            Already registered? <a href="CustomerLogin.html">Sign in</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

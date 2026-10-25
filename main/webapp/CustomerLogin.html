@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Login | Online Electronic Store</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI",Arial,sans-serif; min-height:100vh; background:#f3f6fb; color:#172033; }
+.topbar { background:linear-gradient(120deg,#111827,#253858); color:white; padding:22px 5%; font-size:21px; font-weight:750; }
+.page { min-height:calc(100vh - 70px); display:flex; align-items:center; justify-content:center; padding:30px 16px; }
+.card { width:100%; max-width:440px; padding:34px; background:white; border:1px solid #e7edf5; border-radius:18px; box-shadow:0 12px 35px rgba(15,23,42,.08); }
+.icon { width:54px; height:54px; display:grid; place-items:center; border-radius:14px; background:#dcfce7; color:#15803d; font-size:25px; margin-bottom:22px; }
+h1 { font-size:28px; margin-bottom:8px; }
+.subtitle { color:#64748b; font-size:14px; line-height:1.6; margin-bottom:24px; }
+label { display:block; margin:17px 0 8px; font-size:13px; font-weight:700; color:#334155; }
+input[type="text"],input[type="password"] { width:100%; padding:13px; border:1px solid #dbe3ee; border-radius:9px; font-size:14px; outline:none; }
+input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+button { width:100%; margin-top:24px; padding:14px; border:0; border-radius:9px; background:#2563eb; color:white; font-size:14px; font-weight:700; cursor:pointer; }
+button:hover { background:#1d4ed8; }
+.notice { display:none; margin-bottom:18px; padding:12px; border-radius:8px; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; font-size:13px; }
+.link-row { text-align:center; margin-top:22px; font-size:13px; color:#64748b; }
+a { color:#2563eb; font-weight:650; text-decoration:none; }
+a:hover { text-decoration:underline; }
+</style>
+</head>
+
+<body>
+<div class="topbar">Online Electronic Store</div>
+
+<div class="page">
+    <div class="card">
+        <div class="icon">♙</div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Sign in to browse products and manage your orders.</p>
+
+        <div class="notice" id="loginError">Invalid username or password. Please try again.</div>
+
+        <script>
+        if (location.search.indexOf("error=1") > -1) {
+            document.getElementById("loginError").style.display = "block";
+        }
+        </script>
+
+        <form action="clogin" method="post">
+            <label for="uname">Username</label>
+            <input id="uname" type="text" name="uname"
+                placeholder="Enter your username" autocomplete="username" required>
+
+            <label for="pwd">Password</label>
+            <input id="pwd" type="password" name="pwd"
+                placeholder="Enter your password" autocomplete="current-password" required>
+
+            <button type="submit" name="submit" value="Login">Sign In</button>
+        </form>
+
+        <div class="link-row">
+            New customer? <a href="CustomerRegister.html">Create an account</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

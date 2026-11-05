@@ -95,4 +95,37 @@ public class DB {
         // Check chained SQL exceptions
         return isDuplicate(e.getNextException());
     }
+    
+    // Convert database-specific row limit syntax
+    public static String top(String sql) {
+
+        if (sql == null || !isPostgres()) {
+            return sql;
+        }
+
+        // Convert SQL Server-style TOP syntax to PostgreSQL LIMIT.
+        java.util.regex.Matcher matcher =
+            java.util.regex.Pattern.compile(
+                "(?i)\\bSELECT\\s+TOP\\s*\\(?\\s*(\\d+)\\s*\\)?\\s+"
+            ).matcher(sql);
+
+        if (matcher.find()) {
+            String limit = matcher.group(1);
+
+            sql = matcher.replaceFirst("SELECT ");
+
+            return sql.replaceFirst(
+                "(?i);\\s*$",
+                ""
+            ) + " LIMIT " + limit;
+        }
+
+        return sql;
+    }
+
+    // Generated primary key column configuration
+    public static String[] keyCols() {
+        return new String[] {"id"};
+    }
+
 }

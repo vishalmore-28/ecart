@@ -1,0 +1,2 @@
+<%@ tag body-content="empty" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ attribute name="n" required="true" type="java.lang.Integer" %><span class="stars" aria-label="${n} out of 5"><c:forEach begin="1" end="5" var="i"><c:choose><c:when test="${i <= n}">&#9733;</c:when><c:otherwise><span class="dim">&#9733;</span></c:otherwise></c:choose></c:forEach></span>

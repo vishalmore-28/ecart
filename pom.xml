@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.ecart</groupId>
+  <artifactId>ecart</artifactId>
+  <version>2.0</version>
+  <packaging>war</packaging>
+  <name>ecart - Online Electronic Store</name>
+
+  <properties>
+    <!-- Java 17 bytecode: runs on JDK 17, 21 and 25 -->
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+  </properties>
+
+  <dependencies>
+    <!-- Tomcat 9 = javax.* namespace (do NOT use Tomcat 10) -->
+    <dependency>
+      <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version><scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId>
+      <version>2.3.3</version><scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId><artifactId>jstl</artifactId><version>1.2</version>
+    </dependency>
+    <!-- Oracle driver: NOT downloaded by Maven. Your own ojdbc17.jar is in src/main/webapp/WEB-INF/lib and is packed into the WAR. -->
+      <!-- PostgreSQL JDBC driver (used when DB_URL starts with jdbc:postgresql, e.g. Neon) -->
+    <dependency>
+      <groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><version>42.7.4</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>ecart</finalName>
+    <plugins>
+      <!-- lets you run the one-time old-data import with:  mvn -q compile exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.1.0</version>
+        <configuration><mainClass>com.ecart.tools.MigrateOldData</mainClass></configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>

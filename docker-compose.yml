@@ -1,0 +1,33 @@
+# Local test with PostgreSQL:  docker compose --env-file .env up --build   ->  http://localhost:8080
+# (Oracle XE version: docker-compose.oracle.yml)
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ecart
+      POSTGRES_USER: ecart
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecart -d ecart"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/ecart
+      DB_USER: ecart
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@ecart.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@123}
+    ports:
+      - "8080:8080"
+volumes:
+  pgdata:

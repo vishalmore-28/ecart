@@ -1,0 +1,7 @@
+<aside class="glass admin-nav">
+  <h3>Seller</h3>
+  <a class="${sellerTab == 'dashboard' ? 'cur' : ''}" href="${ctx}/seller">Dashboard</a>
+  <a class="${sellerTab == 'products' ? 'cur' : ''}" href="${ctx}/seller/products">My products</a>
+  <a class="${sellerTab == 'orders' ? 'cur' : ''}" href="${ctx}/seller/orders">Orders</a>
+  <a class="${sellerTab == 'profile' ? 'cur' : ''}" href="${ctx}/seller/profile">Shop profile</a>
+</aside>

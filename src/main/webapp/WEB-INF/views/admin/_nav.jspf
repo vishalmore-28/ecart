@@ -1,0 +1,8 @@
+<aside class="glass admin-nav">
+  <h3>Admin</h3>
+  <a class="${adminTab == 'dashboard' ? 'cur' : ''}" href="${ctx}/admin">Dashboard</a>
+  <a class="${adminTab == 'products' ? 'cur' : ''}" href="${ctx}/admin/products">Products</a>
+  <a class="${adminTab == 'orders' ? 'cur' : ''}" href="${ctx}/admin/orders">Orders</a>
+  <a class="${adminTab == 'sellers' ? 'cur' : ''}" href="${ctx}/admin/sellers">Sellers<c:if test="${pendingSellers > 0}"> <span class="pill">${pendingSellers}</span></c:if></a>
+  <a class="${adminTab == 'users' ? 'cur' : ''}" href="${ctx}/admin/users">Customers</a>
+</aside>

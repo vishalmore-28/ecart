@@ -1,0 +1,196 @@
+-- ecart schema for ORACLE (11g / 12c / 18c / 19c / 21c). Run automatically at start-up; 'already exists' errors (ORA-00955) are ignored.
+
+CREATE SEQUENCE seq_users START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_categories START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_products START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_addresses START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_orders START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_order_items START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_order_events START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_reviews START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE SEQUENCE seq_audit_log START WITH 1 INCREMENT BY 1 NOCACHE;
+
+CREATE TABLE users (
+  id NUMBER(10) PRIMARY KEY,
+  name VARCHAR2(100 CHAR) NOT NULL,
+  email VARCHAR2(150 CHAR) NOT NULL,
+  phone VARCHAR2(20 CHAR),
+  password_hash VARCHAR2(255 CHAR) NOT NULL,
+  role VARCHAR2(10 CHAR) DEFAULT 'USER' NOT NULL,
+  active NUMBER(1) DEFAULT 1 NOT NULL,
+  failed_attempts NUMBER(5) DEFAULT 0 NOT NULL,
+  locked_until TIMESTAMP,
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT uq_users_email UNIQUE (email)
+);
+
+CREATE TABLE categories (
+  id NUMBER(10) PRIMARY KEY,
+  name VARCHAR2(80 CHAR) NOT NULL,
+  icon VARCHAR2(16 CHAR),
+  CONSTRAINT uq_categories_name UNIQUE (name)
+);
+
+CREATE TABLE products (
+  id NUMBER(10) PRIMARY KEY,
+  category_id NUMBER(10) NOT NULL REFERENCES categories(id),
+  name VARCHAR2(200 CHAR) NOT NULL,
+  brand VARCHAR2(80 CHAR),
+  description VARCHAR2(2000 CHAR),
+  price NUMBER(10,2) NOT NULL,
+  mrp NUMBER(10,2) NOT NULL,
+  stock NUMBER(10) DEFAULT 0 NOT NULL,
+  image_url VARCHAR2(500 CHAR),
+  active NUMBER(1) DEFAULT 1 NOT NULL,
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+CREATE TABLE cart_items (
+  user_id NUMBER(10) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id NUMBER(10) NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  qty NUMBER(5) NOT NULL,
+  PRIMARY KEY (user_id, product_id)
+);
+
+CREATE TABLE wishlist (
+  user_id NUMBER(10) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id NUMBER(10) NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  PRIMARY KEY (user_id, product_id)
+);
+
+CREATE TABLE addresses (
+  id NUMBER(10) PRIMARY KEY,
+  user_id NUMBER(10) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  full_name VARCHAR2(100 CHAR) NOT NULL,
+  phone VARCHAR2(20 CHAR) NOT NULL,
+  line1 VARCHAR2(200 CHAR) NOT NULL,
+  line2 VARCHAR2(200 CHAR),
+  city VARCHAR2(80 CHAR) NOT NULL,
+  state VARCHAR2(80 CHAR) NOT NULL,
+  pincode VARCHAR2(10 CHAR) NOT NULL,
+  is_default NUMBER(1) DEFAULT 0 NOT NULL
+);
+
+CREATE TABLE coupons (
+  code VARCHAR2(30 CHAR) PRIMARY KEY,
+  percent NUMBER(3) NOT NULL,
+  min_order NUMBER(10,2) DEFAULT 0 NOT NULL,
+  max_discount NUMBER(10,2),
+  active NUMBER(1) DEFAULT 1 NOT NULL
+);
+
+CREATE TABLE shop_orders (
+  id NUMBER(10) PRIMARY KEY,
+  order_no VARCHAR2(30 CHAR) NOT NULL,
+  user_id NUMBER(10) NOT NULL REFERENCES users(id),
+  status VARCHAR2(15 CHAR) DEFAULT 'PLACED' NOT NULL,
+  subtotal NUMBER(10,2) NOT NULL,
+  discount NUMBER(10,2) DEFAULT 0 NOT NULL,
+  tax NUMBER(10,2) DEFAULT 0 NOT NULL,
+  shipping NUMBER(10,2) DEFAULT 0 NOT NULL,
+  total NUMBER(10,2) NOT NULL,
+  coupon_code VARCHAR2(30 CHAR),
+  ship_name VARCHAR2(100 CHAR) NOT NULL,
+  ship_phone VARCHAR2(20 CHAR) NOT NULL,
+  ship_address VARCHAR2(600 CHAR) NOT NULL,
+  payment_method VARCHAR2(10 CHAR) NOT NULL,
+  payment_status VARCHAR2(10 CHAR) NOT NULL,
+  txn_ref VARCHAR2(40 CHAR),
+  card_last4 VARCHAR2(4 CHAR),
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT uq_orders_no UNIQUE (order_no)
+);
+
+CREATE TABLE order_items (
+  id NUMBER(10) PRIMARY KEY,
+  order_id NUMBER(10) NOT NULL REFERENCES shop_orders(id) ON DELETE CASCADE,
+  product_id NUMBER(10) NOT NULL REFERENCES products(id),
+  name VARCHAR2(200 CHAR) NOT NULL,
+  price NUMBER(10,2) NOT NULL,
+  qty NUMBER(5) NOT NULL
+);
+
+CREATE TABLE order_events (
+  id NUMBER(10) PRIMARY KEY,
+  order_id NUMBER(10) NOT NULL REFERENCES shop_orders(id) ON DELETE CASCADE,
+  status VARCHAR2(15 CHAR) NOT NULL,
+  note VARCHAR2(255 CHAR),
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+CREATE TABLE reviews (
+  id NUMBER(10) PRIMARY KEY,
+  product_id NUMBER(10) NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  user_id NUMBER(10) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  rating NUMBER(1) NOT NULL,
+  title VARCHAR2(120 CHAR),
+  body VARCHAR2(1500 CHAR),
+  verified NUMBER(1) DEFAULT 0 NOT NULL,
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  CONSTRAINT uq_review UNIQUE (product_id, user_id)
+);
+
+CREATE TABLE audit_log (
+  id NUMBER(10) PRIMARY KEY,
+  user_id NUMBER(10),
+  action VARCHAR2(40 CHAR) NOT NULL,
+  detail VARCHAR2(255 CHAR),
+  ip VARCHAR2(45 CHAR),
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+-- ===== Seller / distributor marketplace (added in v3). Safe to re-run: ORA-00955 / ORA-01430 are ignored. =====
+
+CREATE TABLE sellers (
+  user_id NUMBER(10) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  shop_name VARCHAR2(120 CHAR) NOT NULL,
+  business_type VARCHAR2(30 CHAR) NOT NULL,
+  pan VARCHAR2(10 CHAR) NOT NULL,
+  gstin VARCHAR2(15 CHAR),
+  gst_registered NUMBER(1) DEFAULT 1 NOT NULL,
+  address_line1 VARCHAR2(200 CHAR) NOT NULL,
+  address_line2 VARCHAR2(200 CHAR),
+  city VARCHAR2(80 CHAR) NOT NULL,
+  state VARCHAR2(80 CHAR) NOT NULL,
+  pincode VARCHAR2(10 CHAR) NOT NULL,
+  bank_holder VARCHAR2(100 CHAR) NOT NULL,
+  bank_ifsc VARCHAR2(11 CHAR) NOT NULL,
+  bank_last4 VARCHAR2(4 CHAR) NOT NULL,
+  status VARCHAR2(12 CHAR) DEFAULT 'PENDING' NOT NULL,
+  review_note VARCHAR2(255 CHAR),
+  created_at TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+  reviewed_at TIMESTAMP,
+  CONSTRAINT uq_sellers_gstin UNIQUE (gstin)
+);
+
+ALTER TABLE products ADD seller_id NUMBER(10) REFERENCES users(id);
+
+ALTER TABLE products ADD gst_percent NUMBER(4,1) DEFAULT 18 NOT NULL;
+
+ALTER TABLE products ADD hsn_code VARCHAR2(10 CHAR);
+
+ALTER TABLE shop_orders ADD ship_state VARCHAR2(80 CHAR);
+
+ALTER TABLE order_items ADD seller_id NUMBER(10);
+
+ALTER TABLE order_items ADD gst_percent NUMBER(4,1) DEFAULT 18 NOT NULL;
+
+ALTER TABLE order_items ADD hsn_code VARCHAR2(10 CHAR);
+
+ALTER TABLE order_items ADD item_status VARCHAR2(15 CHAR) DEFAULT 'PLACED' NOT NULL;
+
+ALTER TABLE order_items ADD courier VARCHAR2(60 CHAR);
+
+ALTER TABLE order_items ADD tracking_no VARCHAR2(60 CHAR);
+
+CREATE INDEX ix_products_seller ON products(seller_id);
+
+CREATE INDEX ix_items_seller ON order_items(seller_id)

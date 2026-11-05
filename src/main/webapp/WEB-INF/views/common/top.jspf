@@ -1,0 +1,45 @@
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><c:out value="${empty title ? 'Shop' : title}"/> &middot; ecart</title>
+<link rel="stylesheet" href="${ctx}/assets/style.css">
+<script src="${ctx}/assets/app.js" defer></script>
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i></div>
+<header class="nav glass">
+  <a class="logo" href="${ctx}/">e<span>cart</span></a>
+  <form class="search" action="${ctx}/products" method="get">
+    <input type="search" name="q" value="<c:out value='${param.q}'/>" placeholder="Search phones, laptops, audio&hellip;" maxlength="80" aria-label="Search">
+  </form>
+  <nav class="links">
+    <a href="${ctx}/products">Shop</a>
+    <a href="${ctx}/wishlist">Wishlist<c:if test="${wishCount > 0}"> <span class="pill">${wishCount}</span></c:if></a>
+    <a href="${ctx}/cart">Cart<c:if test="${cartCount > 0}"> <span class="pill">${cartCount}</span></c:if></a>
+    <c:if test="${empty sessionScope.user || sessionScope.user.role == 'USER'}"><a href="${ctx}/sell">Sell on ecart</a></c:if>
+    <c:choose>
+      <c:when test="${not empty sessionScope.user}">
+        <div class="menu">
+          <button class="btn ghost sm" type="button"><c:out value="${sessionScope.user.name}"/> &#9662;</button>
+          <div class="drop glass">
+            <a href="${ctx}/orders">My orders</a>
+            <a href="${ctx}/addresses">Addresses</a>
+            <a href="${ctx}/profile">Profile &amp; security</a>
+            <c:if test="${sessionScope.user.admin}"><a href="${ctx}/admin">Admin panel</a></c:if>
+            <c:if test="${sessionScope.user.seller}"><a href="${ctx}/seller">Seller dashboard</a></c:if>
+            <form method="post" action="${ctx}/logout"><input type="hidden" name="_csrf" value="${csrf}"><button type="submit">Sign out</button></form>
+          </div>
+        </div>
+      </c:when>
+      <c:otherwise><a class="btn sm" href="${ctx}/login">Sign in</a></c:otherwise>
+    </c:choose>
+  </nav>
+</header>
+<c:if test="${not empty navCategories}">
+<nav class="cats"><c:forEach var="k" items="${navCategories}"><a href="${ctx}/products?cat=${k.id}"><c:out value="${k.icon}"/> <c:out value="${k.name}"/></a></c:forEach></nav>
+</c:if>
+<main class="wrap">
+<c:if test="${not empty flash}"><div class="flash ${flashType}" role="status"><c:out value="${flash}"/></div></c:if>
